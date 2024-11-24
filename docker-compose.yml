@@ -1,15 +1,37 @@
-version: "3.8"
+version: '3.8'
+
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql_db_Global
-    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_crud
-      MYSQL_USER: marina_brasca
-      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: nestjsdb
+      MYSQL_USER: nestjsuser
+      MYSQL_PASSWORD: nestjspassword
     volumes:
-      - ./mysql:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  nestjs-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: nestjsuser
+      DB_PASSWORD: nestjspassword
+      DB_NAME: nestjsdb
     ports:
-      - "3307:3306"
+      - "3000:3000"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  mysql_data:
