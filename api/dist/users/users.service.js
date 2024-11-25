@@ -11,6 +11,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
@@ -23,56 +32,65 @@ let UsersService = class UsersService {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
     }
-    async create(createUserDto) {
-        const prevUser = await this.findOneByEmail(createUserDto.correo);
-        const prevProfile = await this.profileRepository.findOneBy({
-            username: createUserDto.profile.username,
-        });
-        if (prevProfile || prevUser) {
-            console.log(prevProfile);
-            throw new common_1.BadRequestException('Profile already exists!');
-        }
-        const newUser = this.userRepository.create(createUserDto);
-        return await this.profileRepository
-            .save(createUserDto.profile)
-            .then(() => {
-            this.userRepository.save({
-                ...newUser,
-                profile: createUserDto.profile,
+    create(createUserDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const prevUser = yield this.findOneByEmail(createUserDto.correo);
+            const prevProfile = yield this.profileRepository.findOneBy({
+                username: createUserDto.profile.username,
             });
-        })
-            .then(() => {
-            const responseDto = {
-                nombre: newUser.nombre,
-                apellido: newUser.apellido,
-                correo: newUser.correo,
-                edad: newUser.edad,
-                username: newUser.profile.username,
-            };
-            return responseDto;
-        })
-            .catch((error) => {
-            throw new common_1.BadRequestException(error);
+            if (prevProfile || prevUser) {
+                console.log(prevProfile);
+                throw new common_1.BadRequestException('Profile already exists!');
+            }
+            const newUser = this.userRepository.create(createUserDto);
+            return yield this.profileRepository
+                .save(createUserDto.profile)
+                .then(() => {
+                this.userRepository.save(Object.assign(Object.assign({}, newUser), { profile: createUserDto.profile }));
+            })
+                .then(() => {
+                const responseDto = {
+                    nombre: newUser.nombre,
+                    apellido: newUser.apellido,
+                    correo: newUser.correo,
+                    edad: newUser.edad,
+                    username: newUser.profile.username,
+                };
+                return responseDto;
+            })
+                .catch((error) => {
+                throw new common_1.BadRequestException(error);
+            });
         });
     }
-    async findOneByEmail(correo) {
-        return await this.userRepository.findOneBy({ correo });
+    findOneByEmail(correo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.userRepository.findOneBy({ correo });
+        });
     }
-    async findAll() {
-        return await this.userRepository.find();
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.userRepository.find();
+        });
     }
-    async findOne(id) {
-        const user = await this.userRepository.findOneBy({ id });
-        if (!user) {
-            throw new common_1.BadRequestException(`User with id ${id} not found`);
-        }
-        return user;
+    findOne(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.userRepository.findOneBy({ id });
+            if (!user) {
+                throw new common_1.BadRequestException(`User with id ${id} not found`);
+            }
+            return user;
+        });
     }
-    async update(id, updateUserDto) {
-        return await this.userRepository.update(id, updateUserDto);
+    update(id, updateUserDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.userRepository.update(id, updateUserDto);
+        });
     }
-    async remove(id) {
-        return await this.userRepository.softDelete(id);
+    remove(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.userRepository.softDelete(id);
+        });
     }
 };
 exports.UsersService = UsersService;

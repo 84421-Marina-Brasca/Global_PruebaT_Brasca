@@ -21,6 +21,12 @@
     "forceConsistentCasingInFileNames": true, /*lo cambie a true*/
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/**/*.ts", "src/**/*.spec.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+
+    "src/**/*",
+
+    "jest.config.js"
+
+  ],
+  "exclude": ["node_modules","dist"]
 }
